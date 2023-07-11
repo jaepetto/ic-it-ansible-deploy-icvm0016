@@ -1,0 +1,46 @@
+- name: 'Install server and configure it'
+  hosts: all
+  become: true
+  roles:
+    - role: fail2ban
+
+    - role: geerlingguy.ntp
+      vars:
+        ntp_enabled: true
+        ntp_timezone: Europe/Zurich
+        ntp_area: 'ch'
+
+    - role: geerlingguy.firewall
+      vars:
+        firewall_allowed_tcp_ports:
+          - '22' # SSH
+          - '9100' # node_exporter
+
+    - role: deploy_ic_it_ssh_keys
+
+    - role: geerlingguy.node_exporter
+      vars:
+        node_exporter_host: '0.0.0.0'
+        node_exporter_port: 9100
+
+    - role: jaepetto.ansible_simple_ldap_authentication
+      vars:
+        trusted_group_name: 'SENS-Unit'
+        trusted_group_id: '11241'
+      tags: auth
+
+  tasks:
+    - name: 'Ensure that the required packages to mount NFS volumes are installed'
+      ansible.builtin.apt:
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - nfs-common
+
+    - name: 'Ensure that the NFS volume is mounted correctly'
+      ansible.posix.mount:
+        path: /mnt/sens_data1
+        src: ic1raw.epfl.ch:/u14241_ic_sens_001_files_nfs/sens_data1
+        fstype: nfs
+        opts: defaults
+        state: mounted
