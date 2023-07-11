@@ -1,4 +1,4 @@
-# cdhvm0030.xaas.epfl.ch automated deployment
+# icvm0016.xaas.epfl.ch automated deployment
 
 This repository contains the Ansible playbooks used to deploy the icvm0016.xaas.epfl.ch server.
 
