@@ -26,7 +26,7 @@
     - role: jaepetto.ansible_simple_ldap_authentication
       vars:
         trusted_group_name: 'SENS-Unit'
-        trusted_group_id: '11241'
+        trusted_group_id: 'U14241'
       tags: auth
 
   tasks:
